@@ -1,2 +1,2 @@
-# falling-pickaxe
+# omvfos.github.io
 Falling Pickaxe Game

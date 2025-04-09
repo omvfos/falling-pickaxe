@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Falling Pickaxe</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #1e1e1e; font-family: sans-serif; overflow: hidden; }
+    canvas { display: block; margin: 0 auto; background: #2b2b2b; }
+    .controls {
+      position: fixed;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+    }
+    .controls button {
+      padding: 10px 20px;
+      background: #444;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+<canvas id="gameCanvas" width="360" height="640"></canvas>
+<div class="controls">
+  <button onclick="moveLeft()">Left</button>
+  <button onclick="boost()">Boost</button>
+  <button onclick="moveRight()">Right</button>
+</div>
+
+<script>
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+
+  const pickaxe = {
+    x: canvas.width / 2 - 15,
+    y: 50,
+    width: 30,
+    height: 30,
+    color: '#f4d03f',
+    speed: 2
+  };
+
+  const blocks = [];
+
+  function createBlock() {
+    const types = ['#3498db', '#7f8c8d', '#e74c3c'];
+    const color = types[Math.floor(Math.random() * types.length)];
+    blocks.push({
+      x: Math.random() * (canvas.width - 40),
+      y: canvas.height,
+      width: 40,
+      height: 20,
+      color
+    });
+  }
+
+  function moveLeft() {
+    pickaxe.x -= 30;
+    if (pickaxe.x < 0) pickaxe.x = 0;
+  }
+
+  function moveRight() {
+    pickaxe.x += 30;
+    if (pickaxe.x + pickaxe.width > canvas.width) pickaxe.x = canvas.width - pickaxe.width;
+  }
+
+  function boost() {
+    pickaxe.y += 30;
+  }
+
+  function drawPickaxe() {
+    ctx.fillStyle = pickaxe.color;
+    ctx.fillRect(pickaxe.x, pickaxe.y, pickaxe.width, pickaxe.height);
+  }
+
+  function drawBlocks() {
+    for (let b of blocks) {
+      b.y -= 1.5;
+      ctx.fillStyle = b.color;
+      ctx.fillRect(b.x, b.y, b.width, b.height);
+    }
+  }
+
+  function gameLoop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawPickaxe();
+    drawBlocks();
+    pickaxe.y += pickaxe.speed;
+    if (Math.random() < 0.05) createBlock();
+    requestAnimationFrame(gameLoop);
+  }
+
+  gameLoop();
+</script>
+</body>
+</html>
